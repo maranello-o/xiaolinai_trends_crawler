@@ -1,0 +1,2 @@
+chromedpUrl = "ws://101.34.126.169:9222" # 无头chromedp服务的地址
+scrapeInterval = 10 # 扫描间隔，单位为分钟

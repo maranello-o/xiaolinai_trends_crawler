@@ -37,6 +37,7 @@ func main() {
 			//	chromedp.Flag("headless", false), // 设置为有头模式
 			chromedp.Flag("enable-automation", false),
 			chromedp.Flag("disable-blink-features", "AutomationControlled"), //禁用 blink 特征，防检测关键
+			chromedp.Flag("browser-executable", "/usr/bin/google-chrome"),   // 显式指定 Chrome 浏览器路径，针对linux
 			chromedp.UserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36`),
 		)...,
 	)

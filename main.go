@@ -28,25 +28,10 @@ func main() {
 	if err = toml.Unmarshal(confFile, &conf); err != nil {
 		panic(err)
 	}
-	// 初始化Chromedp上下文
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), conf.ChromedpUrl)
-	defer cancel()
-	//ctx, cancel = chromedp.NewExecAllocator(ctx,
-	//	append(chromedp.DefaultExecAllocatorOptions[:],
-	//		//	chromedp.Flag("headless", false), // 设置为有头模式
-	//		chromedp.Flag("enable-automation", false),
-	//		chromedp.Flag("disable-blink-features", "AutomationControlled"), //禁用 blink 特征，防检测关键
-	//		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36`),
-	//	)...,
-	//)
-	defer cancel()
-
-	ctx, cancel = chromedp.NewContext(ctx)
-	defer cancel()
 
 	for {
 		// 爬取数据
-		articles, err := scrapeArticles(ctx)
+		articles, err := scrapeArticles(conf.ChromedpUrl)
 		if err != nil {
 			fmt.Printf("%s 数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
 		}
@@ -69,7 +54,21 @@ type Article struct {
 	PubTime int32
 }
 
-func scrapeArticles(ctx context.Context) ([]Article, error) {
+func scrapeArticles(remoteUrl string) ([]Article, error) {
+	// 初始化Chromedp上下文
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), remoteUrl)
+	defer cancel()
+	//ctx, cancel = chromedp.NewExecAllocator(ctx,
+	//	append(chromedp.DefaultExecAllocatorOptions[:],
+	//		//	chromedp.Flag("headless", false), // 设置为有头模式
+	//		chromedp.Flag("enable-automation", false),
+	//		chromedp.Flag("disable-blink-features", "AutomationControlled"), //禁用 blink 特征，防检测关键
+	//		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36`),
+	//	)...,
+	//)
+	//defer cancel()
+
+	ctx, _ = chromedp.NewContext(ctx)
 	var articles []Article
 
 	// 访问文章列表页

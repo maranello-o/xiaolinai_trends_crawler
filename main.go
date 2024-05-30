@@ -20,6 +20,11 @@ type config struct {
 	Timeout        int
 }
 
+type crawler struct {
+	InstanceUrl string
+	Timeout     time.Duration
+}
+
 func main() {
 	var conf config
 	confFile, err := os.ReadFile("config.toml")
@@ -29,12 +34,16 @@ func main() {
 	if err = toml.Unmarshal(confFile, &conf); err != nil {
 		panic(err)
 	}
+	cr := crawler{
+		InstanceUrl: conf.ChromedpUrl,
+		Timeout:     time.Duration(conf.Timeout) * time.Minute,
+	}
 
 	for {
 		// 爬取数据
-		articles, err := scrapeArticles(conf.ChromedpUrl, conf.Timeout)
+		articles, err := cr.scrapeArticles()
 		if err != nil {
-			fmt.Printf("%s 数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			fmt.Printf("%s [量子位]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
 			time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
 			continue
 		}
@@ -50,7 +59,6 @@ func main() {
 		fmt.Printf("%s [量子位]数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)
 		time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
 	}
-
 }
 
 type Article struct {
@@ -59,9 +67,9 @@ type Article struct {
 	PubTime int32
 }
 
-func scrapeArticles(remoteUrl string, timeout int) ([]Article, error) {
+func (cr crawler) scrapeArticles() ([]Article, error) {
 	// 初始化Chromedp上下文
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), remoteUrl)
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
 	defer cancel()
 	//ctx, cancel = chromedp.NewExecAllocator(ctx,
 	//	append(chromedp.DefaultExecAllocatorOptions[:],
@@ -74,23 +82,27 @@ func scrapeArticles(remoteUrl string, timeout int) ([]Article, error) {
 	//defer cancel()
 
 	ctx, _ = chromedp.NewContext(ctx)
-	ctx, _ = context.WithTimeout(ctx, time.Minute*time.Duration(timeout))
+	ctx, _ = context.WithTimeout(ctx, time.Minute*cr.Timeout)
 	var articles []Article
 
+	fmt.Printf("%s [量子位]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate("https://www.qbitai.com/"),
 	); err != nil {
 		return nil, err
 	}
+	fmt.Printf("%s [量子位]访问文章列表页成功\n", time.Now().Format("01-02 15:04:05"))
 
 	// 获取所有文章链接
 	var links []string
 	if err := chromedp.Run(ctx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('body > div.main.index_page > div.content > div > * > div > a')).map(a => a.href)`, &links),
 	); err != nil {
 		return nil, err
 	}
+	fmt.Printf("%s [量子位]获取当前页所有文章链接成功,条数：%d 条\n", time.Now().Format("01-02 15:04:05"), len(links))
 
 	for _, link := range links {
 		var title, content, date, timeStr string
@@ -120,6 +132,7 @@ func scrapeArticles(remoteUrl string, timeout int) ([]Article, error) {
 			Content: content,
 			PubTime: pubTime,
 		})
+		fmt.Printf("%s [量子位]本篇文章数据爬取成功！文章标题：%s\n", time.Now().Format("01-02 15:04:05"), title)
 	}
 
 	return articles, nil

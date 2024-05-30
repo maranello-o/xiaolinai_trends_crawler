@@ -126,8 +126,8 @@ func (cr crawler) scrapeArticles() ([]Article, error) {
 		if err != nil {
 			return nil, err
 		}
-		if len([]rune(content)) > 1000 {
-			content = string([]rune(content)[:1000]) // 最多保存一千字，足够满足前端展示需求
+		if len([]rune(content)) > 500 {
+			content = string([]rune(content)[:500]) // 最多保存五百字，足够满足前端展示需求
 		}
 		articles = append(articles, Article{
 			Title:   title,

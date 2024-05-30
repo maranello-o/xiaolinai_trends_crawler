@@ -68,6 +68,7 @@ type Article struct {
 }
 
 func (cr crawler) scrapeArticles() ([]Article, error) {
+	fmt.Printf("%v", cr)
 	// 初始化Chromedp上下文
 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
 	defer cancel()
@@ -82,7 +83,7 @@ func (cr crawler) scrapeArticles() ([]Article, error) {
 	//defer cancel()
 
 	ctx, _ = chromedp.NewContext(ctx)
-	ctx, _ = context.WithTimeout(ctx, time.Minute*cr.Timeout)
+	ctx, _ = context.WithTimeout(ctx, cr.Timeout)
 	var articles []Article
 
 	fmt.Printf("%s [量子位]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))

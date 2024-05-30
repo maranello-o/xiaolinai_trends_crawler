@@ -17,6 +17,7 @@ import (
 type config struct {
 	ChromedpUrl    string
 	ScrapeInterval int
+	Timeout        int
 }
 
 func main() {
@@ -31,9 +32,11 @@ func main() {
 
 	for {
 		// 爬取数据
-		articles, err := scrapeArticles(conf.ChromedpUrl)
+		articles, err := scrapeArticles(conf.ChromedpUrl, conf.Timeout)
 		if err != nil {
 			fmt.Printf("%s 数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
+			continue
 		}
 		fmt.Printf("%s [量子位]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(articles))
 
@@ -41,6 +44,8 @@ func main() {
 		count, err := insertDataIntoDB(articles)
 		if err != nil {
 			fmt.Printf("%s [量子位]数据插入失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
+			continue
 		}
 		fmt.Printf("%s [量子位]数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)
 		time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
@@ -54,7 +59,7 @@ type Article struct {
 	PubTime int32
 }
 
-func scrapeArticles(remoteUrl string) ([]Article, error) {
+func scrapeArticles(remoteUrl string, timeout int) ([]Article, error) {
 	// 初始化Chromedp上下文
 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), remoteUrl)
 	defer cancel()
@@ -69,6 +74,7 @@ func scrapeArticles(remoteUrl string) ([]Article, error) {
 	//defer cancel()
 
 	ctx, _ = chromedp.NewContext(ctx)
+	ctx, _ = context.WithTimeout(ctx, time.Minute*time.Duration(timeout))
 	var articles []Article
 
 	// 访问文章列表页

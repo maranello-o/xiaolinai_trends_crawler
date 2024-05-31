@@ -62,10 +62,11 @@ func (cr Crawler) scrapeLiangziweiArticles() ([]Article, error) {
 			content = string([]rune(content)[:500]) // 最多保存五百字，足够满足前端展示需求
 		}
 		articles = append(articles, Article{
-			Title:   title,
-			Content: content,
-			PubTime: pubTime,
-			Link:    link,
+			Title:      title,
+			Content:    content,
+			PubTime:    pubTime,
+			Link:       link,
+			PlatformId: 1,
 		})
 		fmt.Printf("%s [量子位]本篇文章数据爬取成功！文章标题：%s\n", time.Now().Format("01-02 15:04:05"), title)
 	}
@@ -125,10 +126,11 @@ func (cr Crawler) scrape36KrArticles() ([]Article, error) {
 			content = string([]rune(content)[:500]) // 最多保存五百字，足够满足前端展示需求
 		}
 		articles = append(articles, Article{
-			Title:   title,
-			Content: content,
-			PubTime: pubTime,
-			Link:    link,
+			Title:      title,
+			Content:    content,
+			PubTime:    pubTime,
+			Link:       link,
+			PlatformId: 2,
 		})
 		fmt.Printf("%s [36氪]本篇文章数据爬取成功！文章标题：%s\n", time.Now().Format("01-02 15:04:05"), title)
 	}

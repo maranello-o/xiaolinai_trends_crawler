@@ -69,10 +69,11 @@ func main() {
 }
 
 type Article struct {
-	Title   string
-	Content string
-	PubTime int32
-	Link    string
+	Title      string
+	Content    string
+	PubTime    int32
+	Link       string
+	PlatformId int
 }
 
 func insertDataIntoDB(articles []Article) (int, error) {
@@ -100,7 +101,7 @@ func insertDataIntoDB(articles []Article) (int, error) {
 		// 如果标题不存在，则插入数据
 		if !exists {
 			query = "INSERT INTO trends_from_crawler (title, content, platform_id, pub_time,link,type,create_time) VALUES (?, ?, ?, ?,?,?,?)"
-			_, err = db.Exec(query, article.Title, article.Content, 1, article.PubTime, article.Link, 1, time.Now().Unix())
+			_, err = db.Exec(query, article.Title, article.Content, 1, article.PubTime, article.Link, article.PlatformId, time.Now().Unix())
 			if err != nil {
 				return 0, err
 			}

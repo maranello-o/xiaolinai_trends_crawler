@@ -87,7 +87,7 @@ func (cr Crawler) scrape36KrArticles() ([]Article, error) {
 	fmt.Printf("%s [36氪]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页
 	if err := chromedp.Run(ctx,
-		chromedp.Navigate("https://www.qbitai.com/"),
+		chromedp.Navigate("https://36kr.com/search/articles/AI?sort=date"),
 	); err != nil {
 		return nil, err
 	}

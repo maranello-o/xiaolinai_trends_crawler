@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"math/rand"
 	"strings"
 	"time"
 )
 
-// 量子位
+// 动态-量子位
 func (cr Crawler) scrapeLiangziweiArticles() ([]Article, error) {
 	// 初始化Chromedp上下文
 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
@@ -74,7 +75,7 @@ func (cr Crawler) scrapeLiangziweiArticles() ([]Article, error) {
 	return articles, nil
 }
 
-// 36氪
+// 动态-36氪
 func (cr Crawler) scrape36KrArticles() ([]Article, error) {
 	// 初始化Chromedp上下文
 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
@@ -136,4 +137,61 @@ func (cr Crawler) scrape36KrArticles() ([]Article, error) {
 	}
 
 	return articles, nil
+}
+
+// 人物追踪-张小珺
+func (cr Crawler) scrapeZhangXiaoJun() ([]personTrack, error) {
+	// 初始化Chromedp上下文
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
+	defer cancel()
+
+	ctx, _ = chromedp.NewContext(ctx)
+	ctx, _ = context.WithTimeout(ctx, cr.Timeout)
+
+	fmt.Printf("%s [张小珺]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
+	// 访问文章列表页
+	if err := chromedp.Run(ctx,
+		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/626b46ea9cbbf0451cf5a962"),
+	); err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s [张小珺]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
+	var nodes []*cdp.Node
+	if err := chromedp.Run(ctx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
+		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
+	); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(nodes))
+	for k, v := range nodes {
+		var content, timeStr, link string
+		err := chromedp.Run(ctx,
+			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
+			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
+			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
+		)
+		if err != nil {
+			return nil, err
+		}
+		// 处理时间
+		t, err := time.ParseInLocation(time.RFC3339, timeStr, time.Local)
+		if err != nil {
+			fmt.Println("解析时间出错:", err)
+			return nil, err
+		}
+		link = "https://www.xiaoyuzhoufm.com/" + link
+		tracks[k] = personTrack{
+			PersonId:       1,
+			PersonIdInside: "",
+			Content:        content,
+			ImageInfo:      "[]",
+			VideoInfo:      "[]",
+			Link:           link,
+			PubTime:        int(t.Unix()),
+		}
+		fmt.Printf("%s [张小珺]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
+	}
+
+	return tracks, nil
 }

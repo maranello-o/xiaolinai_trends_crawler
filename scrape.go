@@ -11,13 +11,9 @@ import (
 )
 
 // 动态-量子位
-func (cr Crawler) scrapeLiangziweiArticles() ([]Article, error) {
-	// 初始化Chromedp上下文
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
+func (cr Crawler) scrapeLiangziweiArticles(ctx context.Context) ([]Article, error) {
+	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
-
-	ctx, _ = chromedp.NewContext(ctx)
-	ctx, _ = context.WithTimeout(ctx, cr.Timeout)
 	var articles []Article
 
 	fmt.Printf("%s [量子位]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
@@ -76,13 +72,9 @@ func (cr Crawler) scrapeLiangziweiArticles() ([]Article, error) {
 }
 
 // 动态-36氪
-func (cr Crawler) scrape36KrArticles() ([]Article, error) {
-	// 初始化Chromedp上下文
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
+func (cr Crawler) scrape36KrArticles(ctx context.Context) ([]Article, error) {
+	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
-
-	ctx, _ = chromedp.NewContext(ctx)
-	ctx, _ = context.WithTimeout(ctx, cr.Timeout)
 	var articles []Article
 
 	fmt.Printf("%s [36氪]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
@@ -140,13 +132,9 @@ func (cr Crawler) scrape36KrArticles() ([]Article, error) {
 }
 
 // 人物追踪-张小珺
-func (cr Crawler) scrapeZhangXiaoJun() ([]personTrack, error) {
-	// 初始化Chromedp上下文
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), cr.InstanceUrl)
+func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error) {
+	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
-
-	ctx, _ = chromedp.NewContext(ctx)
-	ctx, _ = context.WithTimeout(ctx, cr.Timeout)
 
 	fmt.Printf("%s [张小珺]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页

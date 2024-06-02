@@ -77,7 +77,6 @@ func main() {
 			continue
 		}
 		fmt.Printf("%s 动态数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)
-		time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval))
 
 		// 爬取张小珺数据
 		zhangXiaoJun, err := cr.scrapeZhangXiaoJun()
@@ -98,6 +97,7 @@ func main() {
 			continue
 		}
 		fmt.Printf("%s 人物追踪数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)
+		time.Sleep(time.Minute * time.Duration(conf.ScrapeInterval)) // 轮次间隔
 	}
 }
 

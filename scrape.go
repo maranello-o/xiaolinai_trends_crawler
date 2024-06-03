@@ -168,7 +168,7 @@ func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error)
 			fmt.Println("解析时间出错:", err)
 			return nil, err
 		}
-		link = "https://www.xiaoyuzhoufm.com/" + link
+		link = "https://www.xiaoyuzhoufm.com" + link
 		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
 			PersonId:       1,

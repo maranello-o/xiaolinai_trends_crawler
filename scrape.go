@@ -12,13 +12,13 @@ import (
 
 // 动态-量子位
 func (cr Crawler) scrapeLiangziweiArticles(ctx context.Context) ([]Article, error) {
-	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
 	var articles []Article
 
 	fmt.Printf("%s [量子位]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Navigate("https://www.qbitai.com/"),
 	); err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (cr Crawler) scrapeLiangziweiArticles(ctx context.Context) ([]Article, erro
 
 	// 获取所有文章链接
 	var links []string
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('body > div.main.index_page > div.content > div > * > div > a')).map(a => a.href)`, &links),
 	); err != nil {
@@ -39,7 +39,7 @@ func (cr Crawler) scrapeLiangziweiArticles(ctx context.Context) ([]Article, erro
 		var title, content, date, timeStr string
 
 		// 访问文章链接并提取数据
-		if err := chromedp.Run(ctx,
+		if err := chromedp.Run(timeoutCtx,
 			chromedp.Navigate(link),
 			chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 			chromedp.Text("body > div.main > div.content > div.article h1", &title),
@@ -73,13 +73,13 @@ func (cr Crawler) scrapeLiangziweiArticles(ctx context.Context) ([]Article, erro
 
 // 动态-36氪
 func (cr Crawler) scrape36KrArticles(ctx context.Context) ([]Article, error) {
-	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
 	var articles []Article
 
 	fmt.Printf("%s [36氪]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Navigate("https://36kr.com/search/articles/AI?sort=date"),
 	); err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (cr Crawler) scrape36KrArticles(ctx context.Context) ([]Article, error) {
 
 	// 获取所有文章链接
 	var links []string
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('#app > div > div.kr-layout-main.clearfloat > div.main-right > div > div > div.kr-search-result-list > div.kr-loading-more > ul > li > div > div > div.kr-shadow-content > div.article-item-pic-wrapper > a')).map(a => a.href)`, &links),
 	); err != nil {
@@ -100,7 +100,7 @@ func (cr Crawler) scrape36KrArticles(ctx context.Context) ([]Article, error) {
 		var title, content, timeStr string
 
 		// 访问文章链接并提取数据
-		if err := chromedp.Run(ctx,
+		if err := chromedp.Run(timeoutCtx,
 			chromedp.Navigate(link),
 			chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 			chromedp.Text("#app > div > div.box-kr-article-new-y > div > div.kr-layout-main.clearfloat > div.main-right > div > div > div > div.article-detail-wrapper-box > div > div.article-left-container > div.article-content > div > div > div:nth-child(1) > div > h1", &title),
@@ -133,19 +133,19 @@ func (cr Crawler) scrape36KrArticles(ctx context.Context) ([]Article, error) {
 
 // 人物追踪-张小珺
 func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error) {
-	ctx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
 	defer cancel()
 
 	fmt.Printf("%s [张小珺]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
 	// 访问文章列表页
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/626b46ea9cbbf0451cf5a962"),
 	); err != nil {
 		return nil, err
 	}
 	fmt.Printf("%s [张小珺]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
 	var nodes []*cdp.Node
-	if err := chromedp.Run(ctx,
+	if err := chromedp.Run(timeoutCtx,
 		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
 		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
 	); err != nil {
@@ -154,7 +154,7 @@ func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error)
 	tracks := make([]personTrack, len(nodes))
 	for k, v := range nodes {
 		var content, timeStr, link string
-		err := chromedp.Run(ctx,
+		err := chromedp.Run(timeoutCtx,
 			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
 			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
 			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
@@ -169,6 +169,7 @@ func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error)
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com/" + link
+		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
 			PersonId:       1,
 			PersonIdInside: "",

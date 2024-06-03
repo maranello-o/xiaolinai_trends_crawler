@@ -38,6 +38,13 @@ type Crawler struct {
 	Timeout       time.Duration
 }
 
+func getChromeCtx(url string) context.Context {
+	// 初始化chrome实例
+	allocCtx, _ := chromedp.NewRemoteAllocator(context.Background(), url)
+	ctx, _ := chromedp.NewContext(allocCtx, chromedp.WithLogf(log.Printf))
+	return ctx
+}
+
 func main() {
 	defer db.Close()
 	var conf config
@@ -52,25 +59,21 @@ func main() {
 		RetryInterval: time.Duration(conf.RetryInterval) * time.Minute,
 		Timeout:       time.Duration(conf.Timeout) * time.Minute,
 	}
-	// 初始化chrome实例
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), conf.ChromedpUrl)
-	defer cancel()
-	ctx, cancel = chromedp.NewContext(ctx, chromedp.WithLogf(log.Printf))
-	defer cancel()
+	url := conf.ChromedpUrl
 	for {
 		// 爬取量子位数据
-		liangziweiArticles, err := cr.scrapeLiangziweiArticles(ctx)
+		liangziweiArticles, err := cr.scrapeLiangziweiArticles(getChromeCtx(url))
 		if err != nil {
 			fmt.Printf("%s [量子位]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
-			time.Sleep(time.Minute * cr.RetryInterval)
+			time.Sleep(cr.RetryInterval)
 			continue
 		}
 		fmt.Printf("%s [量子位]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(liangziweiArticles))
 		// 爬取36氪数据
-		krArticles, err := cr.scrape36KrArticles(ctx)
+		krArticles, err := cr.scrape36KrArticles(getChromeCtx(url))
 		if err != nil {
 			fmt.Printf("%s [36氪]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
-			time.Sleep(time.Minute * cr.RetryInterval)
+			time.Sleep(cr.RetryInterval)
 			continue
 		}
 		fmt.Printf("%s [36氪]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(krArticles))
@@ -82,16 +85,16 @@ func main() {
 		count, err := insertTrendsData(articles)
 		if err != nil {
 			fmt.Printf("%s 动态数据插入失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
-			time.Sleep(time.Minute * cr.RetryInterval)
+			time.Sleep(cr.RetryInterval)
 			continue
 		}
 		fmt.Printf("%s 动态数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)
 
 		// 爬取张小珺数据
-		zhangXiaoJun, err := cr.scrapeZhangXiaoJun(ctx)
+		zhangXiaoJun, err := cr.scrapeZhangXiaoJun(getChromeCtx(url))
 		if err != nil {
 			fmt.Printf("%s [张小珺]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
-			time.Sleep(time.Minute * cr.RetryInterval)
+			time.Sleep(cr.RetryInterval)
 			continue
 		}
 		fmt.Printf("%s [张小珺]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhangXiaoJun))
@@ -102,7 +105,7 @@ func main() {
 		count, err = insertPersonTracksData(personTracks)
 		if err != nil {
 			fmt.Printf("%s 人物追踪数据插入失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
-			time.Sleep(time.Minute * cr.RetryInterval)
+			time.Sleep(cr.RetryInterval)
 			continue
 		}
 		fmt.Printf("%s 人物追踪数据插入成功！本次插入条数：%d 条\n", time.Now().Format("01-02 15:04:05"), count)

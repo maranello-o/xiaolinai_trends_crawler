@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
+	"io"
 	"math/rand"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -182,5 +185,35 @@ func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error)
 		fmt.Printf("%s [张小珺]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
 	}
 
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeFuSheng() ([]personTrack, error) {
+	// 访问文章列表页
+	resp, err := http.Get("https://www.douyin.com/aweme/v1/web/aweme/post/?device_platform=webapp&aid=6383&channel=channel_pc_web&sec_user_id=MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M&max_cursor=0&locate_query=false&show_live_replay_strategy=1&need_time_list=1&time_list_query=0&whale_cut_token=&cut_version=1&count=18&publish_video_strategy_type=2&update_version_code=170400&pc_client_type=1&version_code=290100&version_name=29.1.0&cookie_enabled=true&screen_width=1707&screen_height=1067&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=126.0.0.0&browser_online=true&engine_name=Blink&engine_version=126.0.0.0&os_name=Windows&os_version=10&cpu_core_num=16&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7352702470689539618&msToken=0flT8cSw1FVJfgHzyTqafvKhfj5PVGv9CHD8lU6eI6HRmhAeIzLe5uV-DrxVd25xUfAJRdJ-siw5bthNMi9vxhGjHKze9j-X52jHp6pAyxDhoZ5LvxNcdg09THw-cpMa&a_bogus=YyWhQmhDDkdkvd6g54QLfY3q6Vl3YDRe0trEMD2fAx3Gm639HMPH9exoEvUvc1RjNs%2FDIeYjy4hjT3BMxQCbA3vIH8WKUIc2QfSkKl5Q5xSSs1XyeykgrUkx4XsAtMa0sv1liQ8kww%2FSSYmmWnAJ5kIlO62-zo0%2F9Wu%3D&verifyFp=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9&fp=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       3,
+			PersonIdInside: "78697509",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\",}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
 	return tracks, nil
 }

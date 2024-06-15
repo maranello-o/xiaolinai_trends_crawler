@@ -98,9 +98,19 @@ func main() {
 			continue
 		}
 		fmt.Printf("%s [张小珺]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhangXiaoJun))
+
+		// 爬取傅盛数据
+		fuSheng, err := cr.scrapeFuSheng()
+		if err != nil {
+			fmt.Printf("%s [傅盛]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [傅盛]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(fuSheng))
+
 		personTracks := make([]personTrack, 0, len(zhangXiaoJun))
 		personTracks = append(personTracks, zhangXiaoJun...)
-
+		personTracks = append(personTracks, fuSheng...)
 		// 插入人物追踪数据
 		count, err = insertPersonTracksData(personTracks)
 		if err != nil {

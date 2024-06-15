@@ -221,7 +221,7 @@ func (cr Crawler) scrapeFuSheng() ([]personTrack, error) {
 			PersonIdInside: "78697509",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\",}]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}

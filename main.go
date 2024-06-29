@@ -171,14 +171,14 @@ func main() {
 		}
 		fmt.Printf("%s [堆友]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(duiYou))
 
-		// 爬取可画数据
-		keHua, err := cr.scrapeKeHua()
+		// 爬取扣子数据
+		keHua, err := cr.scrapeKouZi()
 		if err != nil {
-			fmt.Printf("%s [可画]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			fmt.Printf("%s [扣子]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
 			time.Sleep(cr.RetryInterval)
 			continue
 		}
-		fmt.Printf("%s [可画]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(keHua))
+		fmt.Printf("%s [扣子]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(keHua))
 
 		// 爬取科技早知道数据
 		keJiZaoZhiDao, err := cr.scrapeKeJiZaoZhiDao(getChromeCtx(url))

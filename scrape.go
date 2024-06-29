@@ -172,7 +172,6 @@ func (cr Crawler) scrapeZhangXiaoJun(ctx context.Context) ([]personTrack, error)
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com" + link
-		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
 			PersonId:       1,
 			PersonIdInside: "",
@@ -297,7 +296,7 @@ func (cr Crawler) scrapeZhouHongYi() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       5,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -337,7 +336,7 @@ func (cr Crawler) scrapeALiYun() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       6,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -377,7 +376,7 @@ func (cr Crawler) scrapeAppleGuanFang() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       7,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -417,7 +416,7 @@ func (cr Crawler) scrapeDingDing() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       8,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -457,7 +456,7 @@ func (cr Crawler) scrapeDuJiaJianJi() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       9,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -497,7 +496,7 @@ func (cr Crawler) scrapeDuiYou() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       10,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -537,7 +536,7 @@ func (cr Crawler) scrapeKouZi() ([]personTrack, error) {
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
 		tracks[k] = personTrack{
-			PersonId:       4,
+			PersonId:       11,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
@@ -586,9 +585,8 @@ func (cr Crawler) scrapeKeJiZaoZhiDao(ctx context.Context) ([]personTrack, error
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com" + link
-		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
-			PersonId:       1,
+			PersonId:       12,
 			PersonIdInside: "",
 			Content:        content,
 			ImageInfo:      "[]",
@@ -639,9 +637,8 @@ func (cr Crawler) scrapeZhenGeJiJin(ctx context.Context) ([]personTrack, error) 
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com" + link
-		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
-			PersonId:       1,
+			PersonId:       13,
 			PersonIdInside: "",
 			Content:        content,
 			ImageInfo:      "[]",
@@ -692,9 +689,8 @@ func (cr Crawler) scrapeAiJuNeiRen(ctx context.Context) ([]personTrack, error) {
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com" + link
-		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
-			PersonId:       1,
+			PersonId:       14,
 			PersonIdInside: "",
 			Content:        content,
 			ImageInfo:      "[]",
@@ -745,9 +741,8 @@ func (cr Crawler) scrape42ZhangJing(ctx context.Context) ([]personTrack, error) 
 			return nil, err
 		}
 		link = "https://www.xiaoyuzhoufm.com" + link
-		content = strings.Split(content, ".")[1]
 		tracks[k] = personTrack{
-			PersonId:       1,
+			PersonId:       15,
 			PersonIdInside: "",
 			Content:        content,
 			ImageInfo:      "[]",

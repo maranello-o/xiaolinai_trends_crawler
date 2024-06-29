@@ -268,3 +268,495 @@ func (cr Crawler) scrapeLiKaiFu() ([]personTrack, error) {
 	}
 	return tracks, nil
 }
+
+func (cr Crawler) scrapeZhouHongYi() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAAJ3T5moYwIGWeicRl5wBdfosV7R_dCmIbcmAIVZ_3iLK3aLLrOq9pWQDaZBfU0kpQ"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeALiYun() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAA8g9JrmDHhbY-w9tevgXrEbMGqUNNlmIaNTg7tYJTjA8"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeAppleGuanFang() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAAsFK8qDk2oXQ4Wnjt_HkPczoab32qhAK5z3Gn8pWIzDp_toc1YhMef4eaDYbPLDrR"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeDingDing() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAAdnwM98hf2G2ivOlk9sc0VIAywdu2hLry1LCwGrm9X-w"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeDuJiaJianJi() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAAp2jMqtHQRKBfj1dAn8LdvFCxsJnBreZ1a8NU3zmpyDjf8rIyIdr1KhGsOTyA5oZA"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeDuiYou() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.douyin.com/user/MS4wLjABAAAAMYOzfiN_0IemUIGvq3LVTkGe6zRFCI_uQwLGQf2GQeIDh0GeqxRDb2I0lf3MPuIN"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeKeHua() ([]personTrack, error) {
+	// 访问文章列表页
+	url := "https://www.xiaohongshu.com/user/profile/5bc6a51fcb355c0001c9aa7d?m_source=pinpai"
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Referer", "https://www.douyin.com/user/MS4wLjABAAAAAtRQ2UenO2AJ4l0XcBQLek2Tu8Cm2tVm_ZrbF13SI8M")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "csrf_session_id=0630bbd62e9f88a806b21be3b95f71b6; passport_assist_user=Cj0A5mjsHGzMMRItWq-dI4pq-MnoPzsTZqZWZJfqAqKGS0Pgbv5dPuiomMa2abRyLVGBhfFQPq2TtIGcauhxGkoKPKafyL4bcNaeFdx2A1_FKrBLj3xGGAzUG5HQsS_HCbAVCaaoKxNBn6tSe1DH3K9zmRclk5Y71-H4JT8uCBC3mcgNGImv1lQgASIBA9IOYio%3D; ttwid=1%7CauShNcQ1PHqvepvJhYeH7OaXpvIWWD6Wkf2ejBxvzCQ%7C1711934465%7Cce1f3d03ca6a01753e7fe9856d6cf1d272301e48f00ef6b7d9b5e26528a0b008; bd_ticket_guard_client_web_domain=2; sid_guard=a345e4979658d065956adf2c6156d6d3%7C1711934468%7C5184000%7CFri%2C+31-May-2024+01%3A21%3A08+GMT; douyin.com; device_web_cpu_core=16; device_web_memory_size=8; architecture=amd64; LOGIN_STATUS=1; store-region=cn-js; store-region-src=uid; xg_device_score=7.798873949579832; odin_tt=6585e6c1c7ef3961c6c5844b2dda4055e5726c4ba862355f5801dde11fa1d36ac67963a58a6e6bcecb8dd009ae60826b; passport_fe_beating_status=false; SEARCH_RESULT_LIST_TYPE=%22single%22; s_v_web_id=verify_lwizw3tf_mb5hS8lF_TDxT_4kdp_9HYY_cdOJNT9gfoj9; passport_csrf_token=8a8595a7ba40296fc7677c52765ac95b; passport_csrf_token_default=8a8595a7ba40296fc7677c52765ac95b; dy_swidth=1707; dy_sheight=1067; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; download_guide=%223%2F20240613%2F0%22; pwa2=%220%7C0%7C3%7C0%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.956%7D; strategyABtestKey=%221718342776.951%22; xgplayer_device_id=6840998882; xgplayer_user_id=863629687864; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCTHNacURhNkRocy96Z2dwZTRqemdPNkQzN3QvMjY4R05uOFlIQnp0K2U5NXovUGJFdk11TW9YYkxOZmlUYk15a0tOaG1wVytNQi9IZXF3V1FuZlVsRXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; msToken=5foJAadsmkOTekHJn9TOK5uR_p0f7YytooyVfX7trICffJpuhuE91AnbklaYHsw8gfIdmuDnNOuPqlFLn9lhcl2a2FBm7VtZGqHN2mjqhv4BUhrAtey70N3vYMZIvnLw; __ac_nonce=0666c1bdb0086b462330c; __ac_signature=_02B4Z6wo00f01RIXv9wAAIDAzm4gatozirESN7tAACLsHd2wt.IeUp90yIjd-uO6pjJGykdS6fcmStoWyBNdlw10yP8VAj3n3wgqwPboH3OaRLGhA0kswY0lbdLtLN3vIwo1AcIWoKZ0PLeA06; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1707%2C%5C%22screen_height%5C%22%3A1067%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A16%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	resByte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res douyinGetVideoListResp
+	if err = json.Unmarshal(resByte, &res); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(res.AwemeList))
+	for k, v := range res.AwemeList {
+		tracks[k] = personTrack{
+			PersonId:       4,
+			PersonIdInside: "83250291547",
+			Content:        v.Desc,
+			ImageInfo:      "[]",
+			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			Link:           "https://www.douyin.com/video/" + v.AwemeId,
+			PubTime:        v.CreateTime,
+		}
+	}
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeKeJiZaoZhiDao(ctx context.Context) ([]personTrack, error) {
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	defer cancel()
+
+	fmt.Printf("%s [科技早知道]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
+	// 访问文章列表页
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/5e74b52c418a84a046ecaceb"),
+	); err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s [科技早知道]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
+	var nodes []*cdp.Node
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
+		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
+	); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(nodes))
+	for k, v := range nodes {
+		var content, timeStr, link string
+		err := chromedp.Run(timeoutCtx,
+			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
+			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
+			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
+		)
+		if err != nil {
+			return nil, err
+		}
+		// 处理时间
+		t, err := time.ParseInLocation(time.RFC3339, timeStr, time.Local)
+		if err != nil {
+			fmt.Println("解析时间出错:", err)
+			return nil, err
+		}
+		link = "https://www.xiaoyuzhoufm.com" + link
+		content = strings.Split(content, ".")[1]
+		tracks[k] = personTrack{
+			PersonId:       1,
+			PersonIdInside: "",
+			Content:        content,
+			ImageInfo:      "[]",
+			VideoInfo:      "[]",
+			Link:           link,
+			PubTime:        int(t.Unix()),
+		}
+		fmt.Printf("%s [科技早知道]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
+	}
+
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeZhenGeJiJin(ctx context.Context) ([]personTrack, error) {
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	defer cancel()
+
+	fmt.Printf("%s [真格基金]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
+	// 访问文章列表页
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/646f194853a5e5ea1408d97c"),
+	); err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s [真格基金]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
+	var nodes []*cdp.Node
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
+		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
+	); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(nodes))
+	for k, v := range nodes {
+		var content, timeStr, link string
+		err := chromedp.Run(timeoutCtx,
+			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
+			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
+			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
+		)
+		if err != nil {
+			return nil, err
+		}
+		// 处理时间
+		t, err := time.ParseInLocation(time.RFC3339, timeStr, time.Local)
+		if err != nil {
+			fmt.Println("解析时间出错:", err)
+			return nil, err
+		}
+		link = "https://www.xiaoyuzhoufm.com" + link
+		content = strings.Split(content, ".")[1]
+		tracks[k] = personTrack{
+			PersonId:       1,
+			PersonIdInside: "",
+			Content:        content,
+			ImageInfo:      "[]",
+			VideoInfo:      "[]",
+			Link:           link,
+			PubTime:        int(t.Unix()),
+		}
+		fmt.Printf("%s [真格基金]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
+	}
+
+	return tracks, nil
+}
+
+func (cr Crawler) scrapeAiJuNeiRen(ctx context.Context) ([]personTrack, error) {
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	defer cancel()
+
+	fmt.Printf("%s [AI局内人]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
+	// 访问文章列表页
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/643928f99361a4e7c38a9555"),
+	); err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s [AI局内人]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
+	var nodes []*cdp.Node
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
+		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
+	); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(nodes))
+	for k, v := range nodes {
+		var content, timeStr, link string
+		err := chromedp.Run(timeoutCtx,
+			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
+			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
+			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
+		)
+		if err != nil {
+			return nil, err
+		}
+		// 处理时间
+		t, err := time.ParseInLocation(time.RFC3339, timeStr, time.Local)
+		if err != nil {
+			fmt.Println("解析时间出错:", err)
+			return nil, err
+		}
+		link = "https://www.xiaoyuzhoufm.com" + link
+		content = strings.Split(content, ".")[1]
+		tracks[k] = personTrack{
+			PersonId:       1,
+			PersonIdInside: "",
+			Content:        content,
+			ImageInfo:      "[]",
+			VideoInfo:      "[]",
+			Link:           link,
+			PubTime:        int(t.Unix()),
+		}
+		fmt.Printf("%s [AI局内人]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
+	}
+
+	return tracks, nil
+}
+
+func (cr Crawler) scrape42ZhangJing(ctx context.Context) ([]personTrack, error) {
+	timeoutCtx, cancel := context.WithTimeout(ctx, cr.Timeout)
+	defer cancel()
+
+	fmt.Printf("%s [42章经]初始化Chromedp上下文成功\n", time.Now().Format("01-02 15:04:05"))
+	// 访问文章列表页
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Navigate("https://www.xiaoyuzhoufm.com/podcast/648b0b641c48983391a63f98"),
+	); err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s [42章经]访问动态列表页成功\n", time.Now().Format("01-02 15:04:05"))
+	var nodes []*cdp.Node
+	if err := chromedp.Run(timeoutCtx,
+		chromedp.Sleep(time.Millisecond*time.Duration(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)*10+2000)),
+		chromedp.Nodes("#__next > div.jsx-753695559.jsx-677813307 > main > main > div.jsx-7bbe0f84186f1998.tabs-container > ul > *", &nodes),
+	); err != nil {
+		return nil, err
+	}
+	tracks := make([]personTrack, len(nodes))
+	for k, v := range nodes {
+		var content, timeStr, link string
+		err := chromedp.Run(timeoutCtx,
+			chromedp.Text(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"title\")]", &content),
+			chromedp.AttributeValue(v.FullXPath()+"/a/div[contains(@class,\"info\")]/div[contains(@class,\"footer\")]/div[1]/time", "datetime", &timeStr, nil),
+			chromedp.AttributeValue(v.FullXPath()+"/a", "href", &link, nil),
+		)
+		if err != nil {
+			return nil, err
+		}
+		// 处理时间
+		t, err := time.ParseInLocation(time.RFC3339, timeStr, time.Local)
+		if err != nil {
+			fmt.Println("解析时间出错:", err)
+			return nil, err
+		}
+		link = "https://www.xiaoyuzhoufm.com" + link
+		content = strings.Split(content, ".")[1]
+		tracks[k] = personTrack{
+			PersonId:       1,
+			PersonIdInside: "",
+			Content:        content,
+			ImageInfo:      "[]",
+			VideoInfo:      "[]",
+			Link:           link,
+			PubTime:        int(t.Unix()),
+		}
+		fmt.Printf("%s [42章经]获取当前动态成功,内容%v，时间：%d\n", time.Now().Format("01-02 15:04:05"), content, t.Unix())
+	}
+
+	return tracks, nil
+}

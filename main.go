@@ -117,10 +117,121 @@ func main() {
 		}
 		fmt.Printf("%s [李开复]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(liKaiFu))
 
-		personTracks := make([]personTrack, 0, len(zhangXiaoJun)+len(fuSheng)+len(liKaiFu))
+		// 爬取周鸿祎数据
+		zhouHongYi, err := cr.scrapeZhouHongYi()
+		if err != nil {
+			fmt.Printf("%s [周鸿祎]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [周鸿祎]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhouHongYi))
+
+		// 爬取阿里云数据
+		aLiYun, err := cr.scrapeALiYun()
+		if err != nil {
+			fmt.Printf("%s [阿里云]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [阿里云]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(aLiYun))
+
+		// 爬取Apple官方数据
+		appleGuanFang, err := cr.scrapeAppleGuanFang()
+		if err != nil {
+			fmt.Printf("%s [Apple官方]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [Apple官方]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(appleGuanFang))
+
+		// 爬取钉钉数据
+		dingDing, err := cr.scrapeDingDing()
+		if err != nil {
+			fmt.Printf("%s [钉钉]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [钉钉]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(dingDing))
+
+		// 爬取度佳剪辑数据
+		duJiaJianJi, err := cr.scrapeDuJiaJianJi()
+		if err != nil {
+			fmt.Printf("%s [度佳剪辑]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [度佳剪辑]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(duJiaJianJi))
+
+		// 爬取堆友数据
+		duiYou, err := cr.scrapeDuiYou()
+		if err != nil {
+			fmt.Printf("%s [堆友]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [堆友]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(duiYou))
+
+		// 爬取可画数据
+		keHua, err := cr.scrapeKeHua()
+		if err != nil {
+			fmt.Printf("%s [可画]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [可画]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(keHua))
+
+		// 爬取科技早知道数据
+		keJiZaoZhiDao, err := cr.scrapeKeJiZaoZhiDao(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [科技早知道]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [科技早知道]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(keJiZaoZhiDao))
+
+		// 爬取真格基金数据
+		zhenGeJiJin, err := cr.scrapeZhenGeJiJin(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [真格基金]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [真格基金]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhenGeJiJin))
+
+		// 爬取AI局内人数据
+		aiJuNeiRen, err := cr.scrapeAiJuNeiRen(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [AI局内人数据]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [AI局内人数据]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(aiJuNeiRen))
+
+		// 爬取42章经数据
+		zhangJing, err := cr.scrape42ZhangJing(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [42章经]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [42章经]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhangJing))
+
+		personTracks := make([]personTrack, 0)
 		personTracks = append(personTracks, zhangXiaoJun...)
 		personTracks = append(personTracks, fuSheng...)
 		personTracks = append(personTracks, liKaiFu...)
+		personTracks = append(personTracks, zhouHongYi...)
+		personTracks = append(personTracks, aLiYun...)
+		personTracks = append(personTracks, appleGuanFang...)
+		personTracks = append(personTracks, dingDing...)
+		personTracks = append(personTracks, duJiaJianJi...)
+		personTracks = append(personTracks, duiYou...)
+		personTracks = append(personTracks, keHua...)
+		personTracks = append(personTracks, keJiZaoZhiDao...)
+		personTracks = append(personTracks, zhenGeJiJin...)
+		personTracks = append(personTracks, aiJuNeiRen...)
+		personTracks = append(personTracks, zhangJing...)
+
 		// 插入人物追踪数据
 		count, err = insertPersonTracksData(personTracks)
 		if err != nil {

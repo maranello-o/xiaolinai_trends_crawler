@@ -216,6 +216,60 @@ func main() {
 		}
 		fmt.Printf("%s [42章经]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(zhangJing))
 
+		// 爬取一帧秒创数据
+		yiZhenMiaoChuang, err := cr.scrapeYiZhenMiaoChuang()
+		if err != nil {
+			fmt.Printf("%s [一帧秒创]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [一帧秒创]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(yiZhenMiaoChuang))
+
+		// 爬取百度数据
+		baiDu, err := cr.scrapeBaiDu()
+		if err != nil {
+			fmt.Printf("%s [百度]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [百度]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(baiDu))
+
+		// 爬取可灵AI数据
+		keLingAI, err := cr.scrapeKeLingAI()
+		if err != nil {
+			fmt.Printf("%s [可灵AI]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [可灵AI]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(keLingAI))
+
+		// 爬取触手AI数据
+		chuShouAI, err := cr.scrapeChuShouAI()
+		if err != nil {
+			fmt.Printf("%s [触手AI]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [触手AI]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(chuShouAI))
+
+		// 爬取onBoard数据
+		onBoard, err := cr.scrapeOnBoard(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [onBoard]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [onBoard]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(onBoard))
+
+		// 爬取硅谷101数据
+		guiGu101, err := cr.scrapeGuiGu101(getChromeCtx(url))
+		if err != nil {
+			fmt.Printf("%s [硅谷101]数据爬取失败，错误信息: %s\n", time.Now().Format("01-02 15:04:05"), err.Error())
+			time.Sleep(cr.RetryInterval)
+			continue
+		}
+		fmt.Printf("%s [硅谷101]数据爬取成功！本次数据量：%d 条\n", time.Now().Format("01-02 15:04:05"), len(guiGu101))
+
 		personTracks := make([]personTrack, 0)
 		personTracks = append(personTracks, zhangXiaoJun...)
 		personTracks = append(personTracks, fuSheng...)
@@ -231,6 +285,12 @@ func main() {
 		personTracks = append(personTracks, zhenGeJiJin...)
 		personTracks = append(personTracks, aiJuNeiRen...)
 		personTracks = append(personTracks, zhangJing...)
+		personTracks = append(personTracks, yiZhenMiaoChuang...)
+		personTracks = append(personTracks, baiDu...)
+		personTracks = append(personTracks, keLingAI...)
+		personTracks = append(personTracks, chuShouAI...)
+		personTracks = append(personTracks, onBoard...)
+		personTracks = append(personTracks, guiGu101...)
 
 		// 插入人物追踪数据
 		count, err = insertPersonTracksData(personTracks)

@@ -215,12 +215,18 @@ func (cr Crawler) scrapeFuSheng() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       3,
 			PersonIdInside: "78697509",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -255,12 +261,18 @@ func (cr Crawler) scrapeLiKaiFu() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       4,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -295,12 +307,18 @@ func (cr Crawler) scrapeZhouHongYi() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       5,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -335,12 +353,18 @@ func (cr Crawler) scrapeALiYun() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       6,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -375,12 +399,18 @@ func (cr Crawler) scrapeAppleGuanFang() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       7,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -415,12 +445,18 @@ func (cr Crawler) scrapeDingDing() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       8,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -455,12 +491,18 @@ func (cr Crawler) scrapeDuJiaJianJi() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       9,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -495,12 +537,18 @@ func (cr Crawler) scrapeDuiYou() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       10,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}
@@ -535,12 +583,18 @@ func (cr Crawler) scrapeKouZi() ([]personTrack, error) {
 	}
 	tracks := make([]personTrack, len(res.AwemeList))
 	for k, v := range res.AwemeList {
+		videoInfo, _ := json.Marshal(VideoInfo{
+			{
+				Title: v.Desc,
+				Url:   v.Video.Cover.UrlList[0],
+			},
+		})
 		tracks[k] = personTrack{
 			PersonId:       11,
 			PersonIdInside: "83250291547",
 			Content:        v.Desc,
 			ImageInfo:      "[]",
-			VideoInfo:      "[{\"title\":\"" + v.Desc + "\",\"url\":\"" + v.Video.Cover.UrlList[0] + "\"}]",
+			VideoInfo:      string(videoInfo),
 			Link:           "https://www.douyin.com/video/" + v.AwemeId,
 			PubTime:        v.CreateTime,
 		}

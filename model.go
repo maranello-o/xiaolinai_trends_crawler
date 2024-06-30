@@ -16,3 +16,8 @@ type douyinGetVideoListResp struct {
 		} `json:"video"`
 	} `json:"aweme_list"`
 }
+
+type VideoInfo []struct {
+	Title string `json:"title"`
+	Url   string `json:"url"`
+}
